@@ -1,0 +1,40 @@
+static.rb - A file loaded for all directories in the path
+rstatic.rb - Like static, but recursive (for subdirectories)
+*.rb - Files loaded when the page is accessed.
+
+www/
+  html/   --Default Web Root
+  lib/    --Your libraries
+    js/         --Javascript
+    css/        --CSS
+    sass/       --Sass CSS
+    less/       --Less CSS
+    plugins/    --Ruby Plugins (global)
+    .libspec    --Defines what libs are loaded for what pages
+  config.rb     --Config file. Declares VHosts among other things
+
+
+-- NEW --
+
+~/www/              -- Web Root Folder
+  public/           -- Files the users see (Vhost :80, configurable)
+  waitress/         -- Reserved for Waitress Configuration
+    lib/            -- Libraries that can be used by pages
+      js/           -- JavaScript libraries (auto-version e.g. jquery-v-e-r.min.js)
+      css/          -- CSS Libraries
+      sass/         -- SASS CSS
+      less/         -- Less CSS
+      ruby/         -- Ruby files/variables to load when parsing a webpage
+
+REST Builder? e.g. doma.in/user/:userid/:data?scon
+
+FILE FORMAT
+
+*.rbhtml            -- Files served and interpreted by Waitress
+  ```
+    |-
+    | JS = ["jquery", "mylib"]
+    | CSS = ["styles", "compiled_less_or_sass"]
+    | LOAD = ["variables"]
+    |-
+  ```
