@@ -25,7 +25,7 @@ Gem::Specification.new do |spec|
   spec.files = Dir.glob("lib/**/*") + ['Rakefile', 'waitress-core.gemspec', 'Gemfile', 'LICENSE'] + Dir.glob("ext/**/*")
   spec.executables   = []
   spec.require_paths = ["lib"]
-  spec.extensions << "ext/http11/extconf.rb"
+  spec.extensions << "ext/waitress_http11/extconf.rb"
 
   spec.add_development_dependency "bundler", "~> 1.9"
   spec.add_development_dependency "rake"

@@ -492,7 +492,6 @@ VALUE waitress_version() {
 
 void Init_waitress_http11()
 {
-
   rubyModule = rb_define_module("Waitress");
 
   DEF_GLOBAL(request_method, "REQUEST_METHOD");
