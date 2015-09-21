@@ -1,6 +1,7 @@
 require 'waitress/version'
 require 'waitress/server'
 require 'waitress/request'
+require 'waitress/constants'
 
 require 'go'
 require 'configfile'
