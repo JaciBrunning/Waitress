@@ -1,11 +1,14 @@
 require 'waitress/version'
+require 'waitress/util'
+
 require 'waitress/server'
 require 'waitress/request'
-require 'waitress/constants'
+require 'waitress/response'
+
+require 'waitress_http11'
 
 require 'go'
 require 'configfile'
-require 'waitress_http11'
 require 'fileutils'
 
 module Waitress
@@ -33,25 +36,25 @@ module Waitress
       end
     end
 
-    :private
-      def config
-        ConfigFile.new File.join(@usr_root, "config.yml"), {"server_root" => "~/waitress/www"}, :yaml
-      end
+  :private
+    def config
+      ConfigFile.new File.join(@usr_root, "config.yml"), {"server_root" => "~/waitress/www"}, :yaml
+    end
 
-      def serve_filesystem rootdir
-        if rootdir == :default
-          FileUtils.mkdir_p @usr_root unless File.exist? @usr_root
-          cfg = config
-          cfg.load
-          @root = File.expand_path cfg["server_root"]
-        else
-          @root = rootdir
-        end
-        s = serve
+    def serve_filesystem rootdir
+      if rootdir == :default
+        FileUtils.mkdir_p @usr_root unless File.exist? @usr_root
+        cfg = config
+        cfg.load
+        @root = File.expand_path cfg["server_root"]
+      else
+        @root = rootdir
       end
+      s = serve
+    end
 
-      def serve
-        Waitress::HttpServer.new
-      end
+    def serve
+      Waitress::HttpServer.new
+    end
   end
 end

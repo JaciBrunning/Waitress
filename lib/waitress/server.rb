@@ -2,7 +2,7 @@ require 'socket'
 require 'thread'
 
 module Waitress
-  class HttpServer
+  class HttpServer < Array
 
     class HttpParams < Hash
       attr_accessor :http_body
@@ -28,12 +28,22 @@ module Waitress
       @threads.each { |x| x.join }
     end
 
+    def read_io io
+      handle_client io
+    end
+
   :private
     def launch_port port
       @server = TCPServer.new port
       while true
         client = @server.accept
-        go { handle_client client }
+        go do
+          begin
+            handle_client client
+          rescue => e
+            puts "Server Error: #{e} (Fix This!)"
+          end
+        end
       end
     end
 
@@ -55,12 +65,28 @@ module Waitress
           request_headers[k.sub(/HTTP_HEAD_/, "")] = v
         end
       end
-      request = Waitress::HttpRequest.new(
+      request = Waitress::Request.new(
         headers["REQUEST_METHOD"], headers["REQUEST_PATH"], headers["REQUEST_URI"],
         headers["QUERY_STRING"], headers["HTTP_VERSION"], headers.http_body, request_headers
       )
-      puts request
+      handle_request request, client_socket
+      # response = Waitress::Chef.cook_response request
+      # response.serve client_socket
     end
 
+    def handle_request request, client
+      match, pri = self[0], nil
+      self.each do |vhost|
+        if (request.headers['Host'].to_s =~ vhost.domain) != nil
+          match = vhost if pri.nil? || vhost.priority > pri
+        end
+      end
+
+      if match.nil?
+        # Subdomain not found (or default)
+      else
+        match.handle_request request, client
+      end
+    end
   end
 end

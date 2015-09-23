@@ -1,8 +1,16 @@
 module Waitress
-  class Const
+  class Util
 
     def self.mime ext, default='application/octet-stream'
       MIME_TYPES.fetch(ext.to_s.downcase, default)
+    end
+
+    def self.status code
+      STATUS[code]
+    end
+
+    def self.os
+      RbConfig::CONFIG['host_os']
     end
 
     STATUS = {
