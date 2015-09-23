@@ -8,6 +8,14 @@ module ::Kernel
     Waitress::Request.global
   end
 
+  def kernel_prepare
+    $METHOD = get_method
+    $HEADERS = get_headers
+    $PATH = get_path
+    $URI = get_uri
+    $BODY = get_body
+  end
+
   def get_header name
     request_object.headers[name]
   end

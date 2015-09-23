@@ -20,9 +20,12 @@ require 'waitress'
 
 # Waitress.serve!.run(2910).join
 
+trap("INT") { exit }
+
 server = Waitress.serve!
 vhost = Waitress::Vhost.new /.*/
 server << vhost
+
 vhost << Waitress::Handler.new(/.*/) do |req, res|
   file_ext ".txt"
   echo "Hello World"

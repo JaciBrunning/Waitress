@@ -25,7 +25,7 @@ module Waitress
       if match.nil?
         # 404 page
       else
-        match.serve request, response, client
+        match.serve! request, response, client
       end
       response.serve(client) unless (response.done? || client.closed?)
     end

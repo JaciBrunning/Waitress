@@ -49,7 +49,7 @@ module Waitress
 
     def handle_client client_socket
       data = client_socket.readpartial(8196)
-      gofork do |chan|
+      gofork do
         parser = Waitress::HttpParser.new
         params = HttpParams.new
         parser.execute(params, data, 0)
