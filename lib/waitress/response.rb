@@ -3,7 +3,7 @@ module Waitress
 
     @@global = nil
 
-    def self.globalize
+    def globalize
       @@global = self
     end
 
@@ -37,7 +37,7 @@ module Waitress
     end
 
     def mime filext
-      m = Waitress::Const.mime filext
+      m = Waitress::Util.mime filext
       header "Content-Type", m
     end
 
@@ -49,8 +49,17 @@ module Waitress
       @headers[header] = data
     end
 
-    def body_io io
-      @io = io
+    def body_io io=:get
+      @io = io unless io == :get
+      @io
+    end
+
+    def append obj
+      @io.write obj
+    end
+
+    def body str
+      body_io StringIO.new(str)
     end
 
     def serve sock
@@ -59,7 +68,12 @@ module Waitress
         sock.write "#{k}: #{v}\r\n"
       end
       sock.write "\r\n"
-      sock.write @io.read
+      # TODO: Check IO for nil, write 500 error if nil
+      @io.pos = 0
+      until @io.eof?
+        s = @io.read(1024)
+        sock.write s
+      end
       done
       sock.close
     end

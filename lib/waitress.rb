@@ -1,9 +1,13 @@
 require 'waitress/version'
 require 'waitress/util'
+require 'waitress/kernel'
 
 require 'waitress/server'
 require 'waitress/request'
 require 'waitress/response'
+
+require 'waitress/vhost'
+require 'waitress/handlers/handler'
 
 require 'waitress_http11'
 

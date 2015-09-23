@@ -3,7 +3,7 @@ module Waitress
 
     @@global = nil
 
-    def self.globalize
+    def globalize
       @@global = self
     end
 

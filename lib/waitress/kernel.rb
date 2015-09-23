@@ -1,7 +1,7 @@
 module ::Kernel
 
   def response_object
-    Waitress::Reponse.global
+    Waitress::Response.global
   end
 
   def request_object
@@ -44,8 +44,23 @@ module ::Kernel
     response_object.mime_raw raw_type
   end
 
-  def content_type_auto extension
+  def file_ext extension
     response_object.mime extension
+  end
+
+  def echo obj
+    str = obj.to_s
+    write str
+  end
+
+  def write bytes
+    r = response_object
+    r.body "" if r.body_io.nil?
+    r.body_io.write bytes
+  end
+
+  def println obj
+    echo(obj.to_s + "\n")
   end
 
 end
