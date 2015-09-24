@@ -15,6 +15,14 @@ module Waitress
       @documentroot
     end
 
+    def set_404 link
+      @page_404 = link
+    end
+
+    def get_404
+      @page_404
+    end
+
     def handle_request request, client
       match, pri = nil, nil
       self.each do |handler|
@@ -23,9 +31,9 @@ module Waitress
 
       response = Waitress::Response.new
       if match.nil?
-        # 404 page
+        Waitress::Chef.error 404, request, response, client, self
       else
-        match.serve! request, response, client
+        match.serve! request, response, client, self
       end
       response.serve(client) unless (response.done? || client.closed?)
     end

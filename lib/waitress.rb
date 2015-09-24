@@ -8,6 +8,9 @@ require 'waitress/response'
 
 require 'waitress/vhost'
 require 'waitress/handlers/handler'
+require 'waitress/handlers/dirhandler'
+require 'waitress/handlers/handler404'
+require 'waitress/chef'
 
 require 'waitress_http11'
 

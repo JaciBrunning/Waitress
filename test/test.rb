@@ -1,33 +1,23 @@
 $LOAD_PATH << File.expand_path( File.dirname(__FILE__) + '/../lib' )
 require 'waitress'
 
-# parser = Waitress::HttpParser.new
-# params = {}
-# socket = TCPServer.new 2160
-#
-# while true
-#   begin
-#     client = socket.accept
-#     data = client.readpartial(1024)
-#     parser.execute(params, data, 0)
-#     puts params
-#   rescue
-#   end
-# end
-#
-# server = Waitress::HttpServer.new 2910
-# server.run[0].join
-
-# Waitress.serve!.run(2910).join
-
 trap("INT") { exit }
 
 server = Waitress.serve!
 vhost = Waitress::Vhost.new /.*/
 server << vhost
 
-vhost << Waitress::Handler.new(/.*/) do |req, res|
-  file_ext ".txt"
-  echo "Hello World"
-end
+# vhost.set_404 "web_test/index.html"
+
+# vhost << Waitress::Handler.new(/.*/) do |req, res|
+#   file_ext ".txt"
+#   echo "Waitress is Working"
+# end
+
+# vhost << Waitress::Handler.new(/test.html/i, 100) do
+#   file_ext ".html"
+#   echo "<h1> Hello World! </h1>"
+# end
+
+vhost << Waitress::DirHandler.new("web_test", 120)
 server.run(2910).join

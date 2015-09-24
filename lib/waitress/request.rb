@@ -27,6 +27,7 @@ module Waitress
       @http_version = http_version
       @body = body
       @headers = headers
+      @marks = {}
     end
 
     def to_s

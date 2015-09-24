@@ -42,19 +42,27 @@ module Waitress
             handle_client client
           rescue => e
             puts "Server Error: #{e} (Fix This!)"
+            puts e.backtrace
           end
         end
       end
     end
 
     def handle_client client_socket
-      data = client_socket.readpartial(8196)
+      begin
+        data = client_socket.readpartial(8196)
+      rescue
+        client_socket.close unless client_socket.closed?
+        return
+      end
+      t = Time.now
       gofork do
         parser = Waitress::HttpParser.new
         params = HttpParams.new
         parser.execute(params, data, 0)
         build_request params, client_socket
       end.wait
+      puts "#{(Time.now - t) * 1000}ms for request to process"
       client_socket.close
     end
 
@@ -70,8 +78,6 @@ module Waitress
         headers["QUERY_STRING"], headers["HTTP_VERSION"], headers.http_body, request_headers
       )
       handle_request request, client_socket
-      # response = Waitress::Chef.cook_response request
-      # response.serve client_socket
     end
 
     def handle_request request, client

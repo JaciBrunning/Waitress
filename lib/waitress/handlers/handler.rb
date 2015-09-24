@@ -1,6 +1,8 @@
 module Waitress
   class Handler
 
+    attr_accessor :priority
+
     def initialize regex=nil, priority=50, &action
       @regex = regex
       @action = action
@@ -11,21 +13,23 @@ module Waitress
       (request.uri =~ @regex) != nil
     end
 
-    def priority
-      @priority
-    end
-
     # Don't touch this -- this adds Kernel bindings
-    def serve! request, response, client
+    def serve! request, response, client, vhost
       request.globalize
       response.globalize
       kernel_prepare
-      serve request, response, client
+      serve request, response, client, vhost
     end
 
-    def serve request, response, client
-      @action.call(request, response, client) unless @action.nil?
+    def serve request, response, client, vhost
+      @action.call(request, response, client, vhost) unless @action.nil?
     end
 
+  end
+
+  class ErrorHandler < Handler
+    def initialize
+      @priority = -65536
+    end
   end
 end
