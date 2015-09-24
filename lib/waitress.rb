@@ -1,6 +1,7 @@
 require 'waitress/version'
 require 'waitress/util'
 require 'waitress/kernel'
+require 'waitress/parse/query'
 
 require 'waitress/server'
 require 'waitress/request'

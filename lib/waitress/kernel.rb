@@ -16,6 +16,14 @@ module ::Kernel
     $BODY = get_body
   end
 
+  def get
+    request_object.get_query
+  end
+
+  def post
+    request_object.post_query
+  end
+
   def get_header name
     request_object.headers[name]
   end

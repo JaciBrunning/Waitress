@@ -30,6 +30,16 @@ module Waitress
       @marks = {}
     end
 
+    def get_query
+      @get ||= Waitress::QueryParser.parse(@querystring)
+      @get
+    end
+
+    def post_query
+      @post ||= Waitress::QueryParser.parse(@body)
+      @post
+    end
+
     def to_s
       m = lambda { |a,x| x.nil? ? "" : "#{a}=#{x.inspect}" }
       "#<#{self.class} method=#{@method} path=#{@path} #{m.call("query", @query)}>"
