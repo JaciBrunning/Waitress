@@ -8,6 +8,7 @@ module Waitress
       @domain = pattern
       @documentroot = doc_root
       @priority = priority
+      self << Waitress::DirHandler.resources_handler
       #* Do Dir Handler Here *#
     end
 

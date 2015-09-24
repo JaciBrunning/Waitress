@@ -7,6 +7,18 @@ server = Waitress.serve!
 vhost = Waitress::Vhost.new /.*/
 server << vhost
 
+
+# vhost << Waitress::Handler.new(/.*/i, 100) do
+#   file_ext ".html"
+#   println "<h1> Hello World! </h1>"
+#   println "<h2> Hi, #{post["name"]} </h2>"
+# end
+
+server.run(2910).join
+
+
+
+
 # vhost.set_404 "web_test/index.html"
 
 # vhost << Waitress::Handler.new(/.*/) do |req, res|
@@ -14,10 +26,4 @@ server << vhost
 #   echo "Waitress is Working"
 # end
 
-# vhost << Waitress::Handler.new(/test.html/i, 100) do
-#   file_ext ".html"
-#   echo "<h1> Hello World! </h1>"
-# end
-
-vhost << Waitress::DirHandler.new("web_test", 120)
-server.run(2910).join
+# vhost << Waitress::DirHandler.new("web_test", 120)

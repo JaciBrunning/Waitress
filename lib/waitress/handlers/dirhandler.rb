@@ -4,6 +4,11 @@ module Waitress
     attr_accessor :priority
     attr_accessor :directory
 
+    def self.resources_handler
+      @@resources_handler ||= Waitress::DirHandler.new(Waitress::Chef.resources, -1000)
+      @@resources_handler
+    end
+
     def initialize directory, priority=50
       @directory = File.absolute_path(directory)
       @priority = priority
