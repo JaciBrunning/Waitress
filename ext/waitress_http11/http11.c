@@ -7,6 +7,7 @@
 #include <assert.h>
 #include <string.h>
 #include "http11_parser.h"
+#include "http11_wrb_parser.h"
 
 #ifndef RSTRING_PTR
 #define RSTRING_PTR(s) (RSTRING(s)->ptr)
@@ -527,4 +528,5 @@ void Init_waitress_http11()
   rb_define_method(cHttpParser, "finished?", HttpParser_is_finished,0);
   rb_define_method(cHttpParser, "nread", HttpParser_nread,0);
   init_common_fields();
+	init_parse(rubyModule);
 }
