@@ -5,7 +5,7 @@ module Waitress
     attr_accessor :directory
 
     def self.resources_handler
-      @@resources_handler ||= Waitress::DirHandler.new(Waitress::Chef.resources, -1000)
+      @@resources_handler ||= Waitress::DirHandler.new(Waitress::Chef.resources_http, -1000)
       @@resources_handler
     end
 
@@ -23,9 +23,6 @@ module Waitress
       path = File.expand_path File.join("#{directory}", request.path)
       file = Waitress::Chef.find_file(path)[:file]
       Waitress::Chef.serve_file request, response, client, vhost, file
-      # response.mime File.extname(file)
-      # response.body_io File.open(file, "r")
-      # response.status 200       # TODO: Cache Engine
     end
 
   end

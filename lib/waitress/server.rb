@@ -14,7 +14,7 @@ module Waitress
     end
 
     def ports *ports
-      @ports = ports unless ports.length == 0
+      @ports = *ports unless ports.length == 0
       @ports
     end
 

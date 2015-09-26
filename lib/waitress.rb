@@ -1,6 +1,7 @@
 require 'waitress/version'
 require 'waitress/util'
 require 'waitress/kernel'
+require 'waitress/configure'
 require 'waitress/parse/query'
 
 require 'waitress/server'
@@ -26,14 +27,18 @@ module Waitress
     waitress.serve! filesystem, rootdir
   end
 
+  def self.configure! *args, &block
+    Waitress::Configure.configure! *args, &block
+  end
+
   def self.new *args
     Waitress::Launcher.new *args
   end
 
   class Launcher
 
-    def new usr_root="~/waitress"
-      @usr_root = File.expand_path usr_root
+    def initialize waitress_root="~/waitress"
+      @waitress_root = File.expand_path waitress_root
     end
 
     def serve! filesystem=false, rootdir=:default
@@ -46,19 +51,22 @@ module Waitress
 
   :private
     def config
-      ConfigFile.new File.join(@usr_root, "config.yml"), {"server_root" => "~/waitress/www"}, :yaml
+      ConfigFile.new File.join(@waitress_root, "config.yml"), {"server_root" => "~/waitress/www"}, :yaml
     end
 
     def serve_filesystem rootdir
       if rootdir == :default
-        FileUtils.mkdir_p @usr_root unless File.exist? @usr_root
+        FileUtils.mkdir_p @waitress_root unless File.exist? @waitress_root
         cfg = config
         cfg.load
         @root = File.expand_path cfg["server_root"]
       else
         @root = rootdir
       end
-      s = serve
+      # s = serve
+      # Waitress::Configure.new s, @root
+      # s
+      Waitress::Configure.new @root
     end
 
     def serve

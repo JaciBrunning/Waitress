@@ -7,8 +7,7 @@ module Waitress
       if !e404page.nil? && (Waitress::Chef.find_file(e404page)[:result]==:ok)
         Waitress::Chef.serve_file request, response, client, vhost, e404page
       else
-        # response.body "404 - Page Not Found"
-        h = File.join Waitress::Chef.resources, "404.html"
+        h = File.join Waitress::Chef.resources_http, "404.html"
         Waitress::Chef.serve_file request, response, client, vhost, h
       end
     end

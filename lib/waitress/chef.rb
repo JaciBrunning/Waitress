@@ -9,6 +9,10 @@ module Waitress
       File.expand_path "../resources", __FILE__
     end
 
+    def self.resources_http
+      File.join(resources, "http")
+    end
+
     def self.error code, request, response, client, vhost
       HANDLERS[code].serve!(request, response, client, vhost)
     end
