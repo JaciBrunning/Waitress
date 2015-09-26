@@ -37,7 +37,11 @@ module Waitress
     end
 
     def includes dir
-      load_path = dir
+      if dir.is_a? String
+        load_path << File.expand_path(dir)
+      elsif dir.is_a? Array
+        load_path = dir.map { |x| File.expand_path(x) }
+      end
     end
 
     def handle_request request, client

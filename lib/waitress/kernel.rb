@@ -16,6 +16,14 @@ module ::Kernel
     $BODY = get_body
   end
 
+  def includes filename
+    Waitress::Chef.include_file filename
+  end
+
+  def includes_file filename
+    Waitress::Chef.include_absfile filename
+  end
+
   def get
     request_object.get_query
   end
