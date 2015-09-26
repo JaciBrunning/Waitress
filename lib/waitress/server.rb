@@ -55,14 +55,13 @@ module Waitress
         client_socket.close unless client_socket.closed?
         return
       end
-      t = Time.now
+      
       gofork do
         parser = Waitress::HttpParser.new
         params = HttpParams.new
         parser.execute(params, data, 0)
         build_request params, client_socket
       end.wait
-      puts "#{(Time.now - t) * 1000}ms for request to process"
       client_socket.close
     end
 

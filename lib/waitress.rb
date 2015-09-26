@@ -37,7 +37,7 @@ module Waitress
 
   class Launcher
 
-    def initialize waitress_root="~/waitress"
+    def initialize waitress_root="~/.waitress"
       @waitress_root = File.expand_path waitress_root
     end
 
@@ -51,7 +51,8 @@ module Waitress
 
   :private
     def config
-      ConfigFile.new File.join(@waitress_root, "config.yml"), {"server_root" => "~/waitress/www"}, :yaml
+      ConfigFile.new File.join(@waitress_root, "config.yml"),
+        {"server_root" => File.join(@waitress_root, "www")}, :yaml
     end
 
     def serve_filesystem rootdir
