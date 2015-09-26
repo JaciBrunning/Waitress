@@ -9,7 +9,19 @@ module Waitress
       @domain = pattern
       @priority = priority
       @load_path = []
-      self << Waitress::DirHandler.resources_handler
+      enable_waitress_resources
+    end
+
+    def disable_waitress_resources
+      @resources = false
+    end
+
+    def enable_waitress_resources
+      @resources = true
+    end
+
+    def resources?
+      @resources
     end
 
     def set_404 link
@@ -29,12 +41,21 @@ module Waitress
     end
 
     def handle_request request, client
-      match, pri = nil, nil
+      match = nil
+      if @resources && Waitress::DirHandler.resources_handler.respond?(request, self)
+        match = Waitress::DirHandler.resources_handler
+      end
+
       self.each do |handler|
-         match = handler if handler.respond?(request, self) && (pri.nil? || handler.priority > pri)
+         match = handler if handler.respond?(request, self) && (match.nil? || handler.priority > match.priority)
       end
 
       response = Waitress::Response.new
+
+      $REQUEST = request
+      $RESPONSE = response
+      $VHOST = self
+
       if match.nil?
         Waitress::Chef.error 404, request, response, client, self
       else

@@ -1,11 +1,11 @@
 module ::Kernel
 
   def response_object
-    Waitress::Response.global
+    $RESPONSE
   end
 
   def request_object
-    Waitress::Request.global
+    $REQUEST
   end
 
   def kernel_prepare

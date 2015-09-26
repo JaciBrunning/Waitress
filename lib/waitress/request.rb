@@ -1,16 +1,6 @@
 module Waitress
   class Request
 
-    @@global = nil
-
-    def globalize
-      @@global = self
-    end
-
-    def self.global
-      @@global
-    end
-
     attr_accessor :method
     attr_accessor :path
     attr_accessor :uri
@@ -21,8 +11,8 @@ module Waitress
 
     def initialize method, path, uri, query, http_version, body, headers
       @method = method
-      @path = path
-      @uri = uri
+      @path = Waitress::QueryParser.unescape(path)
+      @uri = Waitress::QueryParser.unescape(uri)
       @querystring = query
       @http_version = http_version
       @body = body

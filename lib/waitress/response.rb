@@ -1,16 +1,6 @@
 module Waitress
   class Response
 
-    @@global = nil
-
-    def globalize
-      @@global = self
-    end
-
-    def self.global
-      @@global
-    end
-
     def initialize
       @headers = {}
       status 200

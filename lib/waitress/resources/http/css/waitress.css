@@ -25,6 +25,11 @@ body {
   padding-right: 5%;
 }
 
+.titlecontainer {
+  text-align: center;
+  display: block;
+}
+
 .imgcontainer {
   width: 30%;
   padding-left: 5%;

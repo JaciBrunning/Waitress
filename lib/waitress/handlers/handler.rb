@@ -15,8 +15,6 @@ module Waitress
 
     # Don't touch this -- this adds Kernel bindings
     def serve! request, response, client, vhost
-      request.globalize
-      response.globalize
       kernel_prepare
       serve request, response, client, vhost
     end

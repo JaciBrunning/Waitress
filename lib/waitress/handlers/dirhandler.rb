@@ -16,7 +16,8 @@ module Waitress
 
     def respond? request, vhost
       path = File.expand_path File.join("#{directory}", request.path)
-      path.include?(directory) && (Waitress::Chef.find_file(path)[:result] == :ok)
+      res = Waitress::Chef.find_file(path)[:result]
+      path.include?(directory) && (res == :ok)
     end
 
     def serve request, response, client, vhost
