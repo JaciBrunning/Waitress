@@ -59,10 +59,12 @@ module Waitress
       end
       sock.write "\r\n"
       # TODO: Check IO for nil, write 500 error if nil
-      @io.pos = 0
-      until @io.eof?
-        s = @io.read(4096)
-        sock.write s
+      unless @io.nil?
+        @io.pos = 0
+        until @io.eof?
+          s = @io.read(4096)
+          sock.write s
+        end
       end
       done
       sock.close

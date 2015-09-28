@@ -55,7 +55,7 @@ module Waitress
         client_socket.close unless client_socket.closed?
         return
       end
-      
+
       gofork do
         parser = Waitress::HttpParser.new
         params = HttpParams.new

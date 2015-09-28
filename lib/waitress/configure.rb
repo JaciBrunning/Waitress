@@ -5,9 +5,10 @@ module Waitress
     attr_accessor :hosts
     attr_accessor :ports
 
-    def initialize *ports
+    def initialize configure, *ports
       @ports = *ports
       @hosts = []
+      @configure = configure
     end
 
     def host regex, priority=50, &block
@@ -35,6 +36,7 @@ module Waitress
     end
 
     attr_accessor :servers
+    attr_accessor :root
 
     def initialize root
       @root = root
@@ -60,7 +62,7 @@ module Waitress
     end
 
     def read_configure *args, &block
-      config = Configuration.new *args
+      config = Configuration.new self, *args
       block.call(config)
       @configurations << config
     end
