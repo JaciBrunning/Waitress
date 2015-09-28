@@ -5,10 +5,19 @@ module Waitress
     attr_accessor :domain
     attr_accessor :load_path
 
+    attr_accessor :combos
+    attr_accessor :libraries
+
     def initialize pattern, priority=50
       @domain = pattern
       @priority = priority
       @load_path = []
+      @libdir = "~/.waitress/www/libs"
+      @liburi = "libraries"
+
+      @libraries = {}
+      @combos = {}
+
       enable_waitress_resources
     end
 
@@ -34,6 +43,37 @@ module Waitress
 
     def root dir, priority=50
       self << Waitress::DirHandler.new(File.expand_path(dir), priority)
+    end
+
+    def set_configure conf
+      @configuration = conf
+    end
+
+    def libdir name
+      @libdir = File.expand_path(name)
+    end
+
+    def liburi name=nil
+      @liburi = name unless name.nil?
+      @liburi
+    end
+
+    def bind_lib pattern, type, name, *options
+      lib = { :pattern => pattern, :bindtype => type, :options => options}
+      @libraries[name.to_sym] = lib
+    end
+
+    def lib_combo name, *targets
+      @combos[name.to_sym] = targets
+      targets
+    end
+
+    def parse_libraries
+      self << Waitress::LibraryHandler.new(@libraries, @libdir, @liburi, self)
+    end
+
+    def on_server_start srv
+      parse_libraries
     end
 
     def includes dir

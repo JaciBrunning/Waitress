@@ -16,6 +16,23 @@ module ::Kernel
     $BODY = get_body
   end
 
+  def lib name
+    name = name.to_sym
+    type = $VHOST.libraries[name][:type]
+    libhome = $VHOST.liburi
+    if type == :js
+      echo "<script type='text/javascript' src='/#{libhome}/#{name}'></script>"
+    elsif type == :css
+      echo "<link rel='stylesheet' href='/#{libhome}/#{name}'></link>"
+    end
+  end
+
+  def combo name
+    name = name.to_sym
+    combo_arr = $VHOST.combos[name]
+    combo_arr.each { |n| lib(n) }
+  end
+
   def includes filename
     Waitress::Chef.include_file filename
   end

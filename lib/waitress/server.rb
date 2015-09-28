@@ -21,6 +21,9 @@ module Waitress
     def run *ports
       @ports = ports unless ports.length == 0
       @threads = @ports.map { |x| Thread.new { launch_port x } }
+      self.each do |vhost|
+        vhost.on_server_start self
+      end
       self
     end
 

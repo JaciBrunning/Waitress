@@ -13,8 +13,13 @@ module Waitress
 
     def host regex, priority=50, &block
       host = Waitress::Vhost.new regex, priority
+      host.set_configure @configure
       block.call(host)
       @hosts << host
+    end
+
+    def all_hosts &block
+      @hosts.each { |h| block.call(h) }
     end
 
     def to_s
