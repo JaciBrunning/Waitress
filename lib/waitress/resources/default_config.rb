@@ -17,6 +17,25 @@ Waitress.configure!(2910) do |w|
 
     # This will show up when a 404 error occurs
     # host.set_404 fl("example/http/404.html")
+
+    # Want to rewrite a URL? No problem.
+    host.rewrite /some_url/, "some_other_url"
+    host.rewrite /capture_group_(\d)/, "capture/group\\1"
+
+    # Bind_Lib will allow you to automatically import lib tags into .wrb files
+    # Before they are sent to the client.
+    host.bind_lib /jquery.*/, :js, "jquery"
+    host.bind_lib /boostrap.*/, :css, "boots"
+
+    # Use combos to chain together libraries into a collection
+    host.combo "all-lib", "jquery", "boots"
+
+    # Change this to change where you store your libraries
+    host.libdir fl("libs")
+
+    # Change this to choose what URI the libraries are linked
+    # to (yoursite.com/libraries/library_name)
+    host.liburi "libraries"
   end
 
   # This is your other Virtual Host, accepting connections to any domain.

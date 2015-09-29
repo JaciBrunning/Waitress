@@ -53,21 +53,23 @@ module Waitress
     end
 
     def serve sock
-      sock.write "HTTP/1.1 #{@status} #{@status_msg}\r\n"
-      @headers.each do |k, v|
-        sock.write "#{k}: #{v}\r\n"
-      end
-      sock.write "\r\n"
-      # TODO: Check IO for nil, write 500 error if nil
-      unless @io.nil?
-        @io.pos = 0
-        until @io.eof?
-          s = @io.read(4096)
-          sock.write s
+      unless done?
+        sock.write "HTTP/1.1 #{@status} #{@status_msg}\r\n"
+        @headers.each do |k, v|
+          sock.write "#{k}: #{v}\r\n"
         end
+        sock.write "\r\n"
+        # TODO: Check IO for nil, write 500 error if nil
+        unless @io.nil?
+          @io.pos = 0
+          until @io.eof?
+            s = @io.read(4096)
+            sock.write s
+          end
+        end
+        done
+        sock.close
       end
-      done
-      sock.close
     end
 
   end

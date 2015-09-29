@@ -18,7 +18,18 @@ module Waitress
       @libraries = {}
       @combos = {}
 
+      @on_request = []
+      @after_request = []
+
       enable_waitress_resources
+    end
+
+    def on_request &block
+      @on_request << block
+    end
+
+    def after_request &block
+      @after_request << block
     end
 
     def disable_waitress_resources
@@ -84,15 +95,18 @@ module Waitress
       end
     end
 
-    def handle_request request, client
-      match = nil
-      if @resources && Waitress::DirHandler.resources_handler.respond?(request, self)
-        match = Waitress::DirHandler.resources_handler
-      end
+    def cancel_request
+      @cancelled = true
+    end
 
-      self.each do |handler|
-         match = handler if handler.respond?(request, self) && (match.nil? || handler.priority > match.priority)
+    def rewrite pattern, newpath
+      on_request do |request, vhost|
+        request.path = request.path.gsub(pattern, newpath)
       end
+    end
+
+    def handle_request request, client
+      @cancelled = false
 
       response = Waitress::Response.new
 
@@ -100,11 +114,26 @@ module Waitress
       $RESPONSE = response
       $VHOST = self
 
-      if match.nil?
-        Waitress::Chef.error 404, request, response, client, self
-      else
-        match.serve! request, response, client, self
+      @on_request.each { |x| x.call(request, self, client) }
+
+      unless @cancelled
+        match = nil
+        if @resources && Waitress::DirHandler.resources_handler.respond?(request, self)
+          match = Waitress::DirHandler.resources_handler
+        end
+
+        self.each do |handler|
+           match = handler if handler.respond?(request, self) && (match.nil? || handler.priority > match.priority)
+        end
+
+        if match.nil?
+          Waitress::Chef.error 404, request, response, client, self
+        else
+          match.serve! request, response, client, self
+        end
       end
+
+      @after_request.each { |x| x.call(request, response, self, client) }
       response.serve(client) unless (response.done? || client.closed?)
     end
 
