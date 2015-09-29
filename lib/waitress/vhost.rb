@@ -132,7 +132,7 @@ module Waitress
     # Params:
     # +name+:: The desired name of the combo
     # +targets+:: A list of all the libraries to bind to this combo
-    def lib_combo name, *targets
+    def combo name, *targets
       @combos[name.to_sym] = targets
       targets
     end

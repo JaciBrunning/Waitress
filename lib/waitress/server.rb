@@ -80,7 +80,7 @@ module Waitress
         parser.execute(params, data, 0)
         build_request params, client_socket
       end.wait
-      client_socket.close
+      client_socket.close unless client_socket.closed?
     end
 
     def build_request headers, client_socket
