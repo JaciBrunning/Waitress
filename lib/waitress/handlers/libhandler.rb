@@ -1,8 +1,6 @@
 module Waitress
   class LibraryHandler < Handler
 
-    require 'uglifier'
-
     attr_accessor :priority
 
     def initialize libraries, libdir, liburi, vhost

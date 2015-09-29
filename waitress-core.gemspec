@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
 
   spec.bindir        = "bin"
   spec.files = Dir.glob("lib/**/*") + ['Rakefile', 'waitress-core.gemspec', 'Gemfile', 'LICENSE'] + Dir.glob("ext/**/*")
-  spec.executables   = []
+  spec.executables   = ["waitress"]
   spec.require_paths = ["lib"]
   spec.extensions << "ext/waitress_http11/extconf.rb"
 

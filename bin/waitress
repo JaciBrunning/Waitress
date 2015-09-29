@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+
+require "waitress"
+require "optparse"
+
+trap("INT") { exit }
+
+conf = nil
+
+@options = {}
+
+OptionParser.new do |o|
+  o.on("-h", "--home HOME_DIR", "Change the home directory for Waitress (default: ~/.waitress)") { |x| @options[:home] = x }
+end.parse!
+
+if @options.include? :home
+  @conf = Waitress.serve! true, @options[:home]
+else
+  @conf = Waitress.serve! true
+end
+@conf.run
+@conf.join

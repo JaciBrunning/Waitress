@@ -56,6 +56,11 @@ module Waitress
         s.ports *conf.ports
         s
       end
+      puts "Waitress Configuration Complete"
+      puts "Servers Started on Ports: "
+      @servers.each do |x|
+        puts "\t#{x.ports.join ", "}"
+      end
     end
 
     def run
