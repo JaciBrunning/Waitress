@@ -1,36 +1,10 @@
 module Waitress
 
-  class Configuration
-
-    attr_accessor :hosts
-    attr_accessor :ports
-
-    def initialize configure, *ports
-      @ports = *ports
-      @hosts = []
-      @configure = configure
-    end
-
-    def host regex, priority=50, &block
-      host = Waitress::Vhost.new regex, priority
-      host.set_configure @configure
-      block.call(host)
-      @hosts << host
-    end
-
-    def all_hosts &block
-      @hosts.each { |h| block.call(h) }
-    end
-
-    def to_s
-      m = lambda { |a,x| x.nil? ? "" : "\r\n#{a}=#{x.inspect}" }
-      "#<#{self.class} #{m.call('ports', @ports)} #{m.call('hosts', @hosts)}>"
-    end
-
-  end
-
+  # The Configure Class is used to load Waitress configurations from the filesystem,
+  # usually used in the config.rb file.
   class Configure
 
+    # Endpoint for Waitress.configure!
     def self.configure! *args, &block
       raise "Using 'configure!' outside of file target" if @@configure_target.nil?
       @@configure_target.read_configure *args, &block
@@ -63,20 +37,24 @@ module Waitress
       end
     end
 
+    # Run all servers in this configuration
     def run
       @servers.each { |s| s.run }
     end
 
+    # Join all the server threads in this configuration
     def join
       @servers.each { |s| s.join }
     end
 
+    # Read the configuration object
     def read_configure *args, &block
       config = Configuration.new self, *args
       block.call(config)
       @configurations << config
     end
 
+    # Generate the configuration file if it doesn't already exist.
     def generate_configs
       FileUtils.mkdir_p(@root) unless File.exist?(@root)
       raise "File #{@root} is not a directory!" unless File.directory?(@root)
@@ -87,6 +65,7 @@ module Waitress
       end
     end
 
+    # Load the config.rb file
     def load_cfg
       Waitress::Configure.config_target self
       path = File.absolute_path(@config)
@@ -95,4 +74,43 @@ module Waitress
     end
 
   end
+
+  # The Configuration Class is the object that contains a configuration
+  # of a single server instance, hosting all the methods provided by
+  # Waitress.configure!
+  class Configuration
+
+    attr_accessor :hosts
+    attr_accessor :ports
+
+    def initialize configure, *ports
+      @ports = *ports
+      @hosts = []
+      @configure = configure
+    end
+
+    # Create a new VirtualHost with the given regex, priority, and configure it
+    # inside of its own block.
+    def host regex, priority=50, &block
+      host = Waitress::Vhost.new regex, priority
+      host.set_configure @configure
+      block.call(host)
+      @hosts << host
+      host
+    end
+
+    # Over all the registered VHosts, call this method. Use this to configure
+    # a similar setting for all vhosts at once instead of duplicating code
+    # across all of them. 
+    def all_hosts &block
+      @hosts.each { |h| block.call(h) }
+    end
+
+    def to_s
+      m = lambda { |a,x| x.nil? ? "" : "\r\n#{a}=#{x.inspect}" }
+      "#<#{self.class} #{m.call('ports', @ports)} #{m.call('hosts', @hosts)}>"
+    end
+
+  end
+
 end

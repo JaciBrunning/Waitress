@@ -1,4 +1,8 @@
 module Waitress
+
+  # The LibraryHandler is used to handle requests to the VHost regarding the
+  # libraries to be loaded by other Handlers and .wrb files. This will take any
+  # requests to /libraries (or whatever the user has set it to) to load libraries
   class LibraryHandler < Handler
 
     attr_accessor :priority
@@ -27,7 +31,7 @@ module Waitress
         FileUtils.mkdir_p(d) unless File.exist?(d)
 
         Dir["#{d}/**/*.#{k.to_s}"].each do |fl|
-          @libraries[File.basename(fl, ".#{k.to_s}").to_sym] = { :file => fl, :type => k }
+          @libraries[File.basename(fl).to_sym] = { :file => fl, :type => k }
         end
       end
     end

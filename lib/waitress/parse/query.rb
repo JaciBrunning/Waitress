@@ -1,14 +1,17 @@
 module Waitress
-  # A lot of this class uses methods from Rack::QueryParser
+  # A lot of this class uses methods from Rack::QueryParser in order to Parse
+  # a given QueryString into a Hash of key/value pairs
   class QueryParser
     require 'uri'
 
     DEFAULT_SEP = /[&;] */n
 
+    # Unescape a HTTP URL to regular text. e.g. %20 becomes a space (" ")
     def self.unescape str, enc=Encoding::UTF_8
       URI.decode_www_form_component(str, enc)
     end
 
+    # Parse the given QueryString into a hash of key/value pairs
     def self.parse qs
       return {} if qs.nil? || qs.empty?
       results = {}

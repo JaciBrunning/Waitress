@@ -1,22 +1,35 @@
 module Waitress
+
+  # The chef class handles the cooking of responses, by serving errors and files
+  # from the Filesystem, as well as providing a system for including files within
+  # handlers and .wrb files. This class handles most loading from Filesystems
+  # and serving of the body of a response.
   class Chef
 
     HANDLERS = {
       404 => Handler404.new
     }
 
+    # Get the waitress resources directory, containing templates and the default
+    # http assets of waitress
     def self.resources
       File.expand_path "../resources", __FILE__
     end
 
+    # Get the waitress HTTP assets directory, containing the default index, 404
+    # and styles resources.
     def self.resources_http
       File.join(resources, "http")
     end
 
+    # Set the response to use an error page with the given error code (usually 404)
     def self.error code, request, response, client, vhost
       HANDLERS[code].serve!(request, response, client, vhost)
     end
 
+    # Serve a file from the Filesystem, automatically handling based on whether the
+    # file is dynamic or static. This will set the body io and any required
+    # headers on the reponse object.
     def self.serve_file request, response, client, vhost, file
       if File.extname(file) == ".wrb" || File.extname(file) == ".rb"
         response.mime ".html"
@@ -27,6 +40,9 @@ module Waitress
       end
     end
 
+    # Include a file from the VHost loadpath in the current running instance.
+    # Params:
+    # +filename+:: The filename of the file, relative to the load path of the VHost.
     def self.include_file filename
       lp = $VHOST.load_path
       target = nil
@@ -39,11 +55,16 @@ module Waitress
         end
       end
 
+      raise LoadError.new("Include does not exist in Load Path: #{target}") if target.nil?
       include_absfile target
     end
 
+    # Include a file from anywhere in the filesystem (absolute) in the current running
+    # instance. This will load the file's content and, if dynamic, evaluate it to the
+    # current response.
+    # Params:
+    # +target+:: The target file, given in absolute path form.
     def self.include_absfile target
-      raise LoadError.new("Include does not exist in Load Path: #{target}") if target.nil?
       ext = File.extname target
       if ext == ".wrb"
         Waitress::WRBParser.parse! File.read(target), $RESPONSE.body_io
@@ -54,7 +75,11 @@ module Waitress
       end
     end
 
-    # Big mess of file finding logic
+    # Find a file to serve. This is used by the DirHandler
+    # to automatically include an index file if it exists under the
+    # requested directory, automatically add the .wrb or .html file extension
+    # for paths without the extension, etc. A hash containing the result (ok / notfound)
+    # and the new filepath will be given. 
     def self.find_file abspath
       ret = {}
       if File.exist?(abspath)

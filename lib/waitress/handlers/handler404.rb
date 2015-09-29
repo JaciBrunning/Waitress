@@ -1,4 +1,8 @@
 module Waitress
+  
+  # The 404 Handler is a simple "Catch-All" handler which will be triggered if
+  # a valid handler is not found for the page, and will show an error page
+  # telling the user the page cannot be found
   class Handler404 < ErrorHandler
 
     def serve request, response, client, vhost

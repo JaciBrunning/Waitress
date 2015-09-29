@@ -1,14 +1,25 @@
 module Waitress
+  # A small utility class responsible for determining Mime Types, Status responses
+  # and host details such as Operating System
   class Util
 
+    # Match a file extension to a valid Mime Type to be used in Content-Type
+    # headers
+    # +ext+:: The file extension to map
+    # +default+:: The default value to use if a match is not found. Defaults to
+    # application/octet-stream
     def self.mime ext, default='application/octet-stream'
       MIME_TYPES.fetch(ext.to_s.downcase, default)
     end
 
+    # Get the status message for a status code. This matches codes used by the
+    # HTTP protocol to their message, e.g. 200 -> OK, 404 -> Not Found, etc
+    # +code+:: The Status Code to match.
     def self.status code
       STATUS[code]
     end
 
+    # Get the host Operating System of the system.
     def self.os
       RbConfig::CONFIG['host_os']
     end

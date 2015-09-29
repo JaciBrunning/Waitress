@@ -1,4 +1,8 @@
 module Waitress
+  # The request class is used to represent a HTTP request by a client. This includes
+  # all the headers sent to the server by the client, request URI and those properties
+  # parsed by Mongrel, including the Path and QueryString. GET and POST queries are to
+  # be parsed on-request by the handler or .wrb file as to not waste CPU resources.
   class Request
 
     attr_accessor :method
@@ -20,11 +24,13 @@ module Waitress
       @marks = {}
     end
 
+    # The GET query for the request in the form of a hash. This is parsed on-request
     def get_query
       @get ||= Waitress::QueryParser.parse(@querystring)
       @get
     end
 
+    # The POST query for the request in the form of a hash. This is parsed on-request
     def post_query
       @post ||= Waitress::QueryParser.parse(@body)
       @post

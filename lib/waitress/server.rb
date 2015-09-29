@@ -2,22 +2,34 @@ require 'socket'
 require 'thread'
 
 module Waitress
+
+  # The Waitress HTTPServer. This class is responsible for handling traffic from
+  # clients and delegating it to the correct Virtual Host to further handle.
+  # New threads and Processes are spawned for each connection to the server
   class HttpServer < Array
 
     class HttpParams < Hash
       attr_accessor :http_body
     end
 
+    # Create a new Server instance with the given ports. If no ports are given,
+    # port 80 will be used as a default
     def initialize(*ports)
       ports << 80 if ports.length == 0
       @ports = ports
     end
 
+    # Set or Get the ports for this server. If arguments are provided, the ports
+    # for this server will be replaced with the ones listed. If no arguments are provided,
+    # this method simply returns the ports
     def ports *ports
       @ports = *ports unless ports.length == 0
       @ports
     end
 
+    # Start the server. If arguments are provided, it will run with the ports
+    # declared in the arguments, otherwise, it will use the ports it already has
+    # set (or 80 for the default)
     def run *ports
       @ports = ports unless ports.length == 0
       @threads = @ports.map { |x| Thread.new { launch_port x } }
@@ -27,10 +39,13 @@ module Waitress
       self
     end
 
+    # Join the server, blocking the current thread in order to keep the server alive.
     def join
       @threads.each { |x| x.join }
     end
 
+    # Handle a client based on an IO stream, if you plan to serve on a non-socket
+    # connection
     def read_io io
       handle_client io
     end
