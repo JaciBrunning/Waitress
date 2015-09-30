@@ -86,6 +86,8 @@ module Waitress
               data << ch
             end
           end
+        rescue EOFError, Errno::ECONNRESET, Errno::EPIPE, Errno::EINVAL, Errno::EBADF
+          client_socket.close rescue nil
         rescue => e
           puts "Client Error: #{e}"
           puts e.backtrace
