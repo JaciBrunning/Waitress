@@ -5,7 +5,9 @@ deliver by using C Native Extensions from both the [Mongrel HTTP Parser](https:/
 and those crafted specifically for the Waitress Server.
 
 Waitress is known to be compatible on Mac and Linux systems, but will not
-function on non-POSIX thread model systems (Windows)
+function on non-POSIX thread model systems (Windows)  
+
+[![Build Status](https://travis-ci.org/JacisNonsense/Waitress.svg)](https://travis-ci.org/JacisNonsense/Waitress) [![Gem Version](https://badge.fury.io/rb/waitress-core.svg)](http://badge.fury.io/rb/waitress-core) [![Coverage Status](https://coveralls.io/repos/JacisNonsense/Waitress/badge.svg?branch=master&service=github)](https://coveralls.io/github/JacisNonsense/Waitress?branch=master) [![Code Climate](https://codeclimate.com/github/JacisNonsense/Waitress/badges/gpa.svg)](https://codeclimate.com/github/JacisNonsense/Waitress) [![Join the chat at https://gitter.im/JacisNonsense/Waitress](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/JacisNonsense/Waitress?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## Getting Started
 Getting started is very simple. First, install the gem:
