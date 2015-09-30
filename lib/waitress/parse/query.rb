@@ -50,7 +50,7 @@ module Waitress
       else
         hash[k] ||= {}
         raise TypeError, "expected Hash (got #{hash[k].class.name}) for param `#{k}'" unless hash[k].is_a?(Hash)
-        hash[k] = normalize_params(hash[k], after, v)
+        hash[k] = normalize(hash[k], after, v)
       end
 
       hash

@@ -6,3 +6,4 @@ require 'test/unit'
 require 'waitress'
 
 require_relative 'query_test'
+require_relative 'util_test'

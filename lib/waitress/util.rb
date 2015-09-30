@@ -1,6 +1,5 @@
 module Waitress
-  # A small utility class responsible for determining Mime Types, Status responses
-  # and host details such as Operating System
+  # A small utility class responsible for determining Mime Types and Status responses
   class Util
 
     # Match a file extension to a valid Mime Type to be used in Content-Type
@@ -17,11 +16,6 @@ module Waitress
     # +code+:: The Status Code to match.
     def self.status code
       STATUS[code]
-    end
-
-    # Get the host Operating System of the system.
-    def self.os
-      RbConfig::CONFIG['host_os']
     end
 
     STATUS = {
