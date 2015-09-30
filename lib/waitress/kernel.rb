@@ -142,7 +142,7 @@ module ::Kernel
   # header and takes the full content-type (not fileextension) as an argument
   # Params:
   # +raw_type+:: The mime type of the content, e.g. "text/html"
-  def content_type raw_type
+  def set_content_type raw_type
     response_object.mime_raw raw_type
   end
 
@@ -172,7 +172,7 @@ module ::Kernel
   end
 
   # Write a set of bytes directly to the output stream. Use this if you don't want
-  # to cast to a string as echo() and println() do. 
+  # to cast to a string as echo() and println() do.
   def write bytes
     r = response_object
     r.body "" if r.body_io.nil?
