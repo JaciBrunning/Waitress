@@ -25,6 +25,13 @@ require 'fileutils'
 # classes and utilities created by Waitress
 module Waitress
 
+  SERVERS = []
+
+  at_exit do
+    SERVERS.each { |x| x.killall }
+    exit
+  end
+
   # Create a new Waitress Server, or, in case of the Filesystem, create a Configuration
   # for a set of Servers
   # Params:

@@ -27,6 +27,7 @@ module Waitress
       @servers = @configurations.map do |conf|
         s = Waitress::HttpServer.new
         conf.hosts.each { |h| s << h }
+        s.set_processes conf.processes
         s.ports *conf.ports
         s
       end
@@ -82,11 +83,15 @@ module Waitress
 
     attr_accessor :hosts
     attr_accessor :ports
+    attr_accessor :processes
 
     def initialize configure, *ports
       @ports = *ports
       @hosts = []
       @configure = configure
+
+      @processes = 10
+      @processes = ENV["WAITRESS_PROCESSES"].to_i if ENV.include? "WAITRESS_PROCESSES"
     end
 
     # Create a new VirtualHost with the given regex, priority, and configure it
@@ -101,7 +106,7 @@ module Waitress
 
     # Over all the registered VHosts, call this method. Use this to configure
     # a similar setting for all vhosts at once instead of duplicating code
-    # across all of them. 
+    # across all of them.
     def all_hosts &block
       @hosts.each { |h| block.call(h) }
     end

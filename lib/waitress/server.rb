@@ -12,11 +12,22 @@ module Waitress
       attr_accessor :http_body
     end
 
+    attr_accessor :processes
+
     # Create a new Server instance with the given ports. If no ports are given,
     # port 80 will be used as a default
     def initialize(*ports)
+      Waitress::SERVERS << self
       ports << 80 if ports.length == 0
       @ports = ports
+      @processes = 10
+      @processes = ENV["WAITRESS_PROCESSES"].to_i if ENV.include? "WAITRESS_PROCESSES"
+      @running_processes = []
+    end
+
+    # Set the amount of concurrent Waitress Processes to run on this Server, per Port
+    def set_processes count
+      @processes = count
     end
 
     # Set or Get the ports for this server. If arguments are provided, the ports
@@ -32,16 +43,25 @@ module Waitress
     # set (or 80 for the default)
     def run *ports
       @ports = ports unless ports.length == 0
-      @threads = @ports.map { |x| Thread.new { launch_port x } }
       self.each do |vhost|
         vhost.on_server_start self
       end
+
+      @running_processes = @ports.map do |port|
+        launch_port(port)
+      end
+      @running_processes.flatten!
       self
+    end
+
+    # Killall running processes
+    def killall
+      @running_processes.each { |x| x.kill }
     end
 
     # Join the server, blocking the current thread in order to keep the server alive.
     def join
-      @threads.each { |x| x.join }
+      @running_processes.each { |x| x.wait }
     end
 
     # Handle a client based on an IO stream, if you plan to serve on a non-socket
@@ -52,48 +72,54 @@ module Waitress
 
   :private
     def launch_port port
-      @server = TCPServer.new port
-      while true
-        client = @server.accept
-        go do
-          begin
-            handle_client client
-          rescue => e
-            puts "Server Error: #{e} (Fix This!)"
-            puts e.backtrace
+      serv = TCPServer.new port
+      processes = []
+      @processes.times do
+        processes << gofork {
+          while true
+            begin
+              client = serv.accept
+              handle_client client
+            rescue => e
+              puts "Server Error: #{e} (Fix This!)"
+              puts e.backtrace
+              client.close rescue nil
+            end
           end
-        end
+        }
       end
+      processes
     end
 
     def handle_client client_socket
-      gofork do
-        begin
-          data = client_socket.readpartial(8192)
-          nparsed = 0
+      # pro = gofork do
+      begin
+        data = client_socket.readpartial(8192)
+        nparsed = 0
 
-          parser = Waitress::HttpParser.new
-          params = HttpParams.new
+        parser = Waitress::HttpParser.new
+        params = HttpParams.new
 
-          while nparsed < data.length
-            nparsed = parser.execute(params, data, nparsed)
-            if parser.finished?
-              build_request params, client_socket
-            else
-              ch = client.readpartial(8192)
-              break if !ch or ch.length == 0
+        while nparsed < data.length
+          nparsed = parser.execute(params, data, nparsed)
+          if parser.finished?
+            build_request params, client_socket
+          else
+            ch = client.readpartial(8192)
+            break if !ch or ch.length == 0
 
-              data << ch
-            end
+            data << ch
           end
-        rescue EOFError, Errno::ECONNRESET, Errno::EPIPE, Errno::EINVAL, Errno::EBADF
-          client_socket.close rescue nil
-        rescue => e
-          puts "Client Error: #{e}"
-          puts e.backtrace
         end
-      end.wait
-      client_socket.close unless client_socket.closed?
+      rescue EOFError, Errno::ECONNRESET, Errno::EPIPE, Errno::EINVAL, Errno::EBADF
+        client_socket.close rescue nil
+      rescue => e
+        puts "Client Error: #{e}"
+        puts e.backtrace
+      end
+      # end
+      client_socket.close rescue nil
+      # pro.wait
     end
 
     def build_request headers, client_socket

@@ -96,7 +96,8 @@ module Waitress
           end
         end
         done
-        sock.close
+        sock.close rescue nil
+        @io.close rescue nil
       end
     end
 
