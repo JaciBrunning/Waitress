@@ -67,18 +67,29 @@ module Waitress
     end
 
     def handle_client client_socket
-      begin
-        data = client_socket.readpartial(8196)
-      rescue
-        client_socket.close unless client_socket.closed?
-        return
-      end
-
       gofork do
-        parser = Waitress::HttpParser.new
-        params = HttpParams.new
-        parser.execute(params, data, 0)
-        build_request params, client_socket
+        begin
+          data = client_socket.readpartial(8192)
+          nparsed = 0
+
+          parser = Waitress::HttpParser.new
+          params = HttpParams.new
+
+          while nparsed < data.length
+            nparsed = parser.execute(params, data, nparsed)
+            if parser.finished?
+              build_request params, client_socket
+            else
+              ch = client.readpartial(8192)
+              break if !ch or ch.length == 0
+
+              data << ch
+            end
+          end
+        rescue => e
+          puts "Client Error: #{e}"
+          puts e.backtrace
+        end
       end.wait
       client_socket.close unless client_socket.closed?
     end
