@@ -27,17 +27,25 @@ VALUE WRB_Parse(VALUE self, VALUE string, VALUE buffer) {
 
   int i = 0;
   char pc = NULL;
+  int line_cur = 1;
+  int line = 1;
+
   while (i < slen) {
     char c = sptr[i];
+    if (c == '\n') line_cur += 1;
+
     int open_e = i + tarlen;
     char *open_s = substr(sptr, i, tarlen);
 
     if (mat(open_s, tar) && pc != '\\') {
+      line = line_cur;
       int j = open_e;
       int search = 1;
       int q1 = 0; int q2 = 0;
       while (j < slen && search) {
         char cc = sptr[j];
+        if (cc == '\n') line_cur += 1;
+
         int close_e = j + endlen;
         char *close_s = substr(sptr, j, endlen);
 
@@ -48,7 +56,7 @@ VALUE WRB_Parse(VALUE self, VALUE string, VALUE buffer) {
             i = close_e - 1;
             search = 0;
             char *rb_ev = substr(sptr, open_e, j - open_e);
-            rb_eval_string(rb_ev);
+            rb_yield_values(2, rb_str_new2(rb_ev), INT2NUM(line));
           }
         }
 

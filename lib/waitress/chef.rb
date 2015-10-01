@@ -66,8 +66,11 @@ module Waitress
     # +target+:: The target file, given in absolute path form.
     def self.include_absfile target
       ext = File.extname target
+      bind = Waitress::EvalBindings.new
       if ext == ".wrb"
-        Waitress::WRBParser.parse! File.read(target), $RESPONSE.body_io
+        Waitress::WRBParser.parse!(File.read(target), $RESPONSE.body_io) do |txt, lino|
+          eval(txt, bind.context, target, lino)         # For some reason, rb_f_eval is not exposed to ruby.h
+        end
       elsif ext == ".rb"
         require target
       else
@@ -79,7 +82,7 @@ module Waitress
     # to automatically include an index file if it exists under the
     # requested directory, automatically add the .wrb or .html file extension
     # for paths without the extension, etc. A hash containing the result (ok / notfound)
-    # and the new filepath will be given. 
+    # and the new filepath will be given.
     def self.find_file abspath
       ret = {}
       if File.exist?(abspath)

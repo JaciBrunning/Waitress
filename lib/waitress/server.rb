@@ -56,7 +56,7 @@ module Waitress
 
     # Killall running processes
     def killall
-      @running_processes.each { |x| x.kill }
+      @running_processes.each { |x| x.kill rescue nil }
     end
 
     # Join the server, blocking the current thread in order to keep the server alive.
