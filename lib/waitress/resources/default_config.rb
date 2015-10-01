@@ -2,7 +2,7 @@
 Waitress.configure!(2910) do |w|
 
   # You can run regular Ruby Code in here, too!
-  @home = "~/.waitress/www/"
+  @home = File.dirname(__FILE__)
   def fl file
     File.join(@home, file)
   end

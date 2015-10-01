@@ -90,7 +90,7 @@ module Waitress
       @hosts = []
       @configure = configure
 
-      @processes = 10
+      @processes = 5
       @processes = ENV["WAITRESS_PROCESSES"].to_i if ENV.include? "WAITRESS_PROCESSES"
     end
 

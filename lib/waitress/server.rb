@@ -20,7 +20,7 @@ module Waitress
       Waitress::SERVERS << self
       ports << 80 if ports.length == 0
       @ports = ports
-      @processes = 10
+      @processes = 5
       @processes = ENV["WAITRESS_PROCESSES"].to_i if ENV.include? "WAITRESS_PROCESSES"
       @running_processes = []
     end
@@ -79,7 +79,10 @@ module Waitress
           while true
             begin
               client = serv.accept
-              handle_client client
+              gofork do               # Makes sure requires etc don't get triggered across requests
+                handle_client client
+              end.wait
+              client.close rescue nil
             rescue => e
               puts "Server Error: #{e} (Fix This!)"
               puts e.backtrace
