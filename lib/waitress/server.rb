@@ -88,6 +88,10 @@ module Waitress
           end
         }
       end
+
+      processes.each do |pr|
+        Process.detach(pr.pid)
+      end
       processes
     end
 
