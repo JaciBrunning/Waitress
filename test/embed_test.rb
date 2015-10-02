@@ -1,7 +1,5 @@
 class EmbedTest < Test::Unit::TestCase
 
-  require 'open-uri'
-
   def setup_server
     server = Waitress.serve!
     server.ports 2940, 2941
@@ -21,7 +19,10 @@ class EmbedTest < Test::Unit::TestCase
     end
 
     server.run(2950, 2951)
+
+    @server = server
   end
+
 
   def test_hello
     setup_server
@@ -34,6 +35,8 @@ class EmbedTest < Test::Unit::TestCase
 
     resp = open("http://localhost:2951/someotherpage").read
     assert_equal(resp, "Hello World\n")
+
+    @server.killall
   end
 
 end
