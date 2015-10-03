@@ -29,7 +29,17 @@ module Waitress
       @on_request = []
       @after_request = []
 
+      @config_data = {}
+
       enable_waitress_resources
+    end
+
+    # The config data of the VHost. This config data is set by the configuration
+    # file and can be read by the server when serving requests. This is so users
+    # can set data in their config.rb file and read it out on their requests. Use
+    # this to set constants such as Social Media IDs and other details
+    def config
+      @config_data
     end
 
     # Register a listener that will be triggered once a request has been received

@@ -71,6 +71,13 @@ module ::Kernel
     Waitress::Chef.include_absfile filename
   end
 
+  # The configuration for the VHost. As described in the +Waitress::VHost+ class,
+  # this data is set in the config.rb file and is then read out later by the
+  # server. Use this to configure constants such as Social Media links, and other details
+  def config
+    $VHOST.config
+  end
+
   # Returns a Hash of the GET query of the request. This may be an empty array
   # if querystring was present
   def get
