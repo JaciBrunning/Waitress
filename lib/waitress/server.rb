@@ -17,7 +17,6 @@ module Waitress
     # Create a new Server instance with the given ports. If no ports are given,
     # port 80 will be used as a default
     def initialize(*ports)
-      Waitress::SERVERS << self
       ports << 80 if ports.length == 0
       @ports = ports
       @processes = 5

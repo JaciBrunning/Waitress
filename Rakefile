@@ -11,3 +11,7 @@ Rake::TestTask.new do |t|
   t.test_files = FileList['test/unit.rb']
   t.verbose = true
 end
+
+task :bench do
+  load "./bench/benchmark.rb"
+end
