@@ -10,3 +10,4 @@
 *.so
 *.gem
 test_old/
+test_libs/

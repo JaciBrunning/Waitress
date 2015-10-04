@@ -25,5 +25,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "coveralls"
   spec.add_dependency "Go.rb", ">= 0.3.0"
   spec.add_dependency "scon"
+  spec.add_dependency "json"
+  spec.add_dependency "less"
   spec.add_dependency "configfile"
 end

@@ -20,6 +20,7 @@ module Waitress
       @domain = pattern
       @priority = priority
       @load_path = []
+
       @libdir = "~/.waitress/www/libs"
       @liburi = "libraries"
 
@@ -98,6 +99,7 @@ module Waitress
     # Set the directory in which Libraries are contained. Libraries are specially handled by
     # waitress to be loaded into .wrb files and handlers. Default: "libs/"
     # This file will contain your CSS, JS and any other libraries.
+    # Bower packages are also supported under this directory ("bower_components")
     def libdir name
       @libdir = File.expand_path(name)
     end

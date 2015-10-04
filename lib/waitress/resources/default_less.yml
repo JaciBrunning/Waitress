@@ -1,0 +1,7 @@
+---
+libs:
+  # List your LESS entrypoints here
+  # mymain: main.less
+watch:
+  # List the LESS files you want to automatically update on change here
+  #- main.less
