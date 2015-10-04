@@ -27,5 +27,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "scon"
   spec.add_dependency "json"
   spec.add_dependency "less"
+  spec.add_dependency "therubyracer"
   spec.add_dependency "configfile"
 end
