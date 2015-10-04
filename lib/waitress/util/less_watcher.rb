@@ -3,11 +3,16 @@ module Waitress
 
     @@details = {}
     @@mtimes = {}
+    @@watchtime = 30
     Thread.new do
       while true
         check
-        sleep 5
+        sleep @@watchtime
       end
+    end
+
+    def self.set_time time
+      @@watchtime = time
     end
 
     def self.mtime(file)

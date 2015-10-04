@@ -111,6 +111,12 @@ module Waitress
       @hosts.each { |h| block.call(h) }
     end
 
+    # Set the watch period for the LESS Watcher, i.e. how long to sleep before
+    # checking LESS files for an update and recompile
+    def less_watch time
+      Waitress::LESSWatcher.set_time time
+    end
+
     def to_s
       m = lambda { |a,x| x.nil? ? "" : "\r\n#{a}=#{x.inspect}" }
       "#<#{self.class} #{m.call('ports', @ports)} #{m.call('hosts', @hosts)}>"
