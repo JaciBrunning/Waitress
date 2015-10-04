@@ -16,6 +16,7 @@ require 'waitress/handlers/handler404'
 require 'waitress/handlers/libhandler'
 require 'waitress/chef'
 require 'waitress/evalbind'
+require 'waitress/restful/restbuilder'
 
 require 'waitress_http11'
 
