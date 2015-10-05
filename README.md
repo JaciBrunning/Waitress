@@ -117,3 +117,6 @@ Waitress is designed to be really fast at parsing and serving of webpages, and t
 C Native Extensions allow HTTP requests to be parsed extremely fast, and also allow .wrb files to be evaluated really quickly. HTTP Request Parsing is from the [Mongrel Project](http://github.com/mongrel/mongrel), and WRB Parsing is custom made for Waitress.  
 
 Whenever a new request comes in, Waitress parses the request and then spawns a new Process. This Process manages that request and that request only, meaning that .wrb files have access to the entire Ruby runtime without interfering with other requests. This also means that requests can be served extremely quickly.
+
+## Contributing to Waitress
+You can contribute to the Waitress repository simply by Forking the repository and making a Pull Request, or even raising an issue. Looking for something to do? Find a goal in the [TODO File](TODO.md).  

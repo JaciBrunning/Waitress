@@ -1,0 +1,6 @@
+ - [ ] HTTPS Support
+ - [ ] Logging and Error Handling
+ - [ ] Profiling
+ - [ ] Move QueryString parsing to C Native Extensions
+ - [ ] Implement GZip caching for static files, and an optional on-the-fly GZip for dynamic pages
+ - [ ] Optional Directory Listening
