@@ -76,17 +76,8 @@ module Waitress
       @processes.times do
         processes << gofork {
           while true
-            begin
-              client = serv.accept
-              gofork do               # Makes sure requires etc don't get triggered across requests
-                handle_client client
-              end.wait
-              client.close rescue nil
-            rescue => e
-              puts "Server Error: #{e} (Fix This!)"
-              puts e.backtrace
-              client.close rescue nil
-            end
+            client = serv.accept
+            connect_client(client)
           end
         }
       end
@@ -97,8 +88,20 @@ module Waitress
       processes
     end
 
+    def connect_client client
+      begin
+        gofork do               # Makes sure requires etc don't get triggered across requests
+          handle_client client
+        end.wait
+        client.close rescue nil
+      rescue => e
+        puts "Server Error: #{e} (Fix This!)"
+        puts e.backtrace
+        client.close rescue nil
+      end
+    end
+
     def handle_client client_socket
-      # pro = gofork do
       begin
         data = client_socket.readpartial(8192)
         nparsed = 0
@@ -123,9 +126,7 @@ module Waitress
         puts "Client Error: #{e}"
         puts e.backtrace
       end
-      # end
       client_socket.close rescue nil
-      # pro.wait
     end
 
     def build_request headers, client_socket

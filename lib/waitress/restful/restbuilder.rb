@@ -6,6 +6,7 @@ module Waitress
     require 'yaml'
 
     attr_accessor :priority
+    attr_accessor :regex
 
     SUPPORTED_FORMATS = [:json, :scon, :yaml, :yml]
 
@@ -23,15 +24,16 @@ module Waitress
         else
           buildRe << enumerations.join("|")
         end
-        buildRe << ")"
-        buildRe << "?" if optional
-        buildRe << "/"
-        buildRe << "?" if optional
+        if optional
+          buildRe << "/)?"
+        else
+          buildRe << ")/"
+        end
 
         buildRe
       end
 
-      Waitress::REST.new(Regexp.new(a), &call)
+      Waitress::REST.new(Regexp.new("^#{a}$"), &call)
     end
 
     def initialize regex, &call
@@ -40,8 +42,14 @@ module Waitress
       @priority = 200
     end
 
+    def getpath request
+      path = request.path
+      path += "/" unless path.end_with? "/"
+      path
+    end
+
     def respond? request, vhost
-      (request.uri =~ @regex) != nil
+      (getpath(request) =~ @regex) != nil
     end
 
     def encode_format content_hash, request, response, type
@@ -61,7 +69,7 @@ module Waitress
     end
 
     def serve request, response, client, vhost
-      match = request.uri.match @regex
+      match = getpath(request).match @regex
 
       form = :json
       if (request.get_query.include? "format")
