@@ -50,7 +50,13 @@ module ::Kernel
   def combo name
     name = name.to_sym
     combo_arr = $VHOST.combos[name]
-    combo_arr.each { |n| lib(n) }
+    combo_arr.each do |n|
+      if $VHOST.combos.include? n.to_sym
+        combo(n)
+      else
+        lib(n)
+      end
+    end
   end
 
   # Include another .wrb, .rb or any other file in the load path of the VHost into this

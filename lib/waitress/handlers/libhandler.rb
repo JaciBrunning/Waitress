@@ -79,7 +79,7 @@ module Waitress
           Waitress::LESSWatcher.new(map) { |file| compile_less(file, lessdir) }
         end
       else
-        File.write(entry, File.join(Waitress::Chef.resources, "default_less.yml"))
+        File.write(entry, File.read(File.join(Waitress::Chef.resources, "default_less.yml")))
       end
     end
 
