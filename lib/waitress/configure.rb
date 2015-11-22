@@ -29,6 +29,7 @@ module Waitress
         conf.hosts.each { |h| s << h }
         s.set_processes conf.processes
         s.ports *conf.ports
+        s.internal_error conf.internal_error
         s
       end
       puts "Waitress Configuration Complete"
@@ -84,11 +85,13 @@ module Waitress
     attr_accessor :hosts
     attr_accessor :ports
     attr_accessor :processes
+    attr_accessor :internal_error
 
     def initialize configure, *ports
       @ports = *ports
       @hosts = []
       @configure = configure
+      @internal_error = false
 
       @processes = 5
       @processes = ENV["WAITRESS_PROCESSES"].to_i if ENV.include? "WAITRESS_PROCESSES"
@@ -115,6 +118,11 @@ module Waitress
     # checking LESS files for an update and recompile
     def less_watch time
       Waitress::LESSWatcher.set_time time
+    end
+    
+    # Set to true to enable 500 error backtraces in the browser
+    def detailed_500 enabled
+      @internal_error = enabled
     end
 
     def to_s

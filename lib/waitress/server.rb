@@ -21,6 +21,7 @@ module Waitress
       @ports = ports
       @processes = 5
       @processes = ENV["WAITRESS_PROCESSES"].to_i if ENV.include? "WAITRESS_PROCESSES"
+      @backtrace_500 = false
       @running_processes = []
     end
 
@@ -67,6 +68,11 @@ module Waitress
     # connection
     def read_io io
       handle_client io
+    end
+    
+    # Set to true to enable clients to view the 500 error backtrace
+    def internal_error enabled
+      @backtrace_500 = enabled
     end
 
   :private
@@ -123,8 +129,9 @@ module Waitress
       rescue EOFError, Errno::ECONNRESET, Errno::EPIPE, Errno::EINVAL, Errno::EBADF
         client_socket.close rescue nil
       rescue => e
-        puts "Client Error: #{e}"
-        puts e.backtrace
+        # puts "Client Error: #{e}"
+        # puts e.backtrace
+        Handler500.trigger client_socket, self, e, @backtrace_500
       end
       client_socket.close rescue nil
     end
