@@ -1,4 +1,6 @@
 # Waitress
+
+[![Join the chat at https://gitter.im/JacisNonsense/Waitress](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/JacisNonsense/Waitress?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 Waitress is a lightweight Ruby Web Server with support for dynamic pages,
 virtual hosts, library management and much more. Waitress remains quick to
 deliver by using C Native Extensions from both the [Mongrel HTTP Parser](https://github.com/mongrel/mongrel)
